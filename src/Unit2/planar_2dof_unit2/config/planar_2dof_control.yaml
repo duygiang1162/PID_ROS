@@ -1,0 +1,15 @@
+#PID Unit 2
+planar_2dof:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Position Controllers ---------------------------------------
+  joints_position_controller:
+    type: my_controller_unit2_unit3_pid/PositionController
+    joint1: joint1
+    joint2: joint2
+    gains1: [300.0,0.05,200.0] #PID
+    gains2: [300.0,0.05,200.0] #PID
+    set_points: [-50.0,-27.0] #deg th1,th2

@@ -1,0 +1,11 @@
+<launch>
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find planar_2dof_unit6)/urdf/planar_2dof.xacro'" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args=" -urdf -model planar_2dof -param robot_description -J joint1 0.6 -J joint2 0.3"/>
+
+</launch>

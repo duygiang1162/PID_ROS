@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/planar_2dof</robotNamespace>
+      <controlPeriod>0.001</controlPeriod>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="force" filename="libforce.so">
+      <linkname>P_2</linkname>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="platform">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- Link1 -->
+  <gazebo reference="link1">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <!-- Link2 -->
+  <gazebo reference="link2">
+
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+
+  <!-- Box 
+  <gazebo reference="link3">
+
+    <material>Gazebo/Green</material>
+  </gazebo>
+-->
+
+ 
+</robot>

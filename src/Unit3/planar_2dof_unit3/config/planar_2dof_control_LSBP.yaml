@@ -1,0 +1,18 @@
+#PID Unit 2
+planar_2dof:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Position Controllers ---------------------------------------
+  joints_position_controller:
+    type: my_controller_unit3_LSBP/PositionController
+    joint1: joint1
+    joint2: joint2
+    gains1: [333.42,66.67] #PD
+    gains2: [333.42,66.67] #PD
+    q_f: [90.0,60.0] #link1, link2, deg
+    q_0: [0.0,0.0] #link1, link2
+    t: [0.0,4.0,20.0] #t0, tb, tf
+    v: [0.1] #velocity

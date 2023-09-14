@@ -1,0 +1,5 @@
+<library path="lib/libmy_controller_unit3_pid_lib">
+  <class name="my_controller_unit2_unit3_pid/PositionController" 
+         type="controller_ns::PositionController"           
+         base_class_type="controller_interface::ControllerBase" />
+</library>

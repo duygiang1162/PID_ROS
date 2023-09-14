@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(planar_2dof_unit2)
+
+## Add support for C++11, supported in ROS Kinetic and newer
+add_definitions(-std=c++11)
+
+## Find catkin macros and libraries
+find_package(catkin REQUIRED COMPONENTS
+  rospy
+  roscpp
+  gazebo_ros
+  gazebo_plugins
+  rospy
+)
+
+# Depend on system install of Gazebo
+find_package(gazebo REQUIRED)
+
+
+link_directories(${GAZEBO_LIBRARY_DIRS})
+include_directories(${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS} ${GAZEBO_INCLUDE_DIRS})
+
+# velocity plugin
+add_library(velocity SHARED src/velocity.cpp)
+target_link_libraries(velocity ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+
+catkin_package(
+
+)
+
+###########
+## Build ##
+###########
+
+# include_directories(include)
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)

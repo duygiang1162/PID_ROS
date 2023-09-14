@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find planar_2dof_unit2)/launch/start_world.launch"/>
+  <include file="$(find planar_2dof_unit2)/launch/spawn.launch"/>
+  <!--
+  <include file="$(find planar_2dof_unit2)/launch/planar_2dof_control.launch"/>
+  -->
+</launch>

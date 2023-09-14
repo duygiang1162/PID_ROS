@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="planar_2dof" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value="1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="P_link_dim" value="0.03" />
+  <xacro:property name="link_i_y" value="0.1" /> 
+  <xacro:property name="link_i_z" value="0.01" /> 
+  <xacro:property name="base_xy" value="0.5" /> <!-- BAse x y dimensions -->
+  <xacro:property name="base_z" value="0.05" /> <!-- BAse Z dimensions -->
+  <xacro:property name="r1" value="1" /> <!-- Link 1 -->
+  <xacro:property name="r2" value="1" /> <!-- Link 2 -->
+  <xacro:property name="r3" value="1" /> <!-- Link 3 -->
+  
+  <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
+  <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
+
+  <xacro:macro name="box_inertia" params="mass x y z">
+    <inertia  ixx="${mass*(y*y+z*z)/12.0}" ixy = "0" ixz = "0"
+              iyy="${mass*(x*x+z*z)/12.0}" iyz = "0"
+              izz="${mass*(x*x+y*y)/12.0}"
+    />
+  </xacro:macro>
+
+  <xacro:macro  name="cylinder_inertia" params="mass r l">
+      <inertia  ixx="${mass*(3*r*r+l*l)/12}" ixy = "0" ixz = "0"
+                iyy="${mass*(3*r*r+l*l)/12}" iyz = "0"
+                izz="${mass*(r*r)/2}" />
+    </xacro:macro >
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find planar_2dof_unit3)/urdf/planar_2dof.gazebo" />
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find planar_2dof_unit3)/urdf/materials.xacro" />
+
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <!-- Base Link -->
+  <link name="platform">
+    <collision>
+      <origin xyz="0 0 ${base_z/2}" rpy="0 0 0"/>
+      <geometry>
+	      <box size="${base_xy} ${base_xy} ${base_z}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${base_z/2}" rpy="0 0 0"/>
+      <geometry>
+	      <box size="${base_xy} ${base_xy} ${base_z}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${base_z/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <xacro:box_inertia mass="${mass}" x="${base_xy}" y="${base_xy}" z="${base_z}"/>
+    </inertial>
+  </link>
+
+  <joint name="fixed" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="platform"/>
+  </joint>
+
+
+  <link name="P_0">
+    <collision>
+
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+      	<cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <xacro:cylinder_inertia mass="${mass}" r="${P_link_dim}" l="${link_i_z}"/>
+    </inertial>
+  </link> 
+
+  <joint name="P0_joint" type="fixed">
+    <parent link="platform"/>
+    <child link="P_0"/>
+    <origin xyz="0 0 ${base_z + link_i_z/2.0}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="link1">
+    <collision>
+
+      <origin xyz="${r1/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <box size="${r1} ${link_i_y} ${link_i_z}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${r1/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+      	<box size="${r1} ${link_i_y} ${link_i_z}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${r1/2} 0 0" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <xacro:box_inertia mass="${mass}" x="${r1}" y="${link_i_y}" z="${link_i_z}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint1" type="continuous">
+    <parent link="P_0"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  
+  </joint>
+
+  <link name="P_1">
+    <collision>
+
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+      	<cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <xacro:cylinder_inertia mass="${0.001}" r="${P_link_dim}" l="${link_i_z}"/>
+    </inertial>
+  </link> 
+
+  <joint name="P1_joint" type="fixed">
+    <parent link="link1"/>
+    <child link="P_1"/>
+    <origin xyz="${r1} 0 0" rpy="0 0 0"/>
+  </joint>
+
+
+
+  <link name="link2">
+    <collision>
+
+      <origin xyz="${r2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <box size="${r2} ${link_i_y} ${link_i_z}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${r2/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+      	<box size="${r2} ${link_i_y} ${link_i_z}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${r2/2} 0 0" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <xacro:box_inertia mass="${mass}" x="${r2}" y="${link_i_y}" z="${link_i_z}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint2" type="continuous">
+    <parent link="P_1"/>
+    <child link="link2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+
+  </joint>
+
+
+  <link name="P_2">
+    <collision>
+
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+    </collision>
+
+
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+      	<cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <xacro:cylinder_inertia mass="${0.001}" r="${P_link_dim}" l="${link_i_z}"/>
+    </inertial>
+  </link> 
+
+  <joint name="P2_joint" type="revolute">
+      <origin xyz="${r2} 0 0" rpy="0 0 0"/>
+      <parent link="link2"/>
+      <child link="P_2"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="0" lower="0" upper="0" velocity="0"/>
+    </joint>
+
+  
+
+
+
+
+<!--
+<link name="link3">
+    <collision>
+
+      <origin xyz="${0} 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <box size="${0.01} ${0.01} ${0.01}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${0} 0 0" rpy="0 0 0"/>
+      <geometry>
+      	<box size="${0.01} ${0.01} ${0.01}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${0} 0 0" rpy="0 0 0"/>
+      <mass value="${0.0001}"/>
+      <xacro:box_inertia mass="${0.0001}" x="${0.01}" y="${0.01}" z="${0.01}"/>
+    </inertial>
+  </link>
+
+
+  <joint name="joint3" type="fixed">
+    <parent link="P_2"/>
+    <child link="link3"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+
+  </joint>
+
+
+  <link name="P_3">
+    <collision>
+
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	      <cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0"/>
+      <geometry>
+      	<cylinder length="${link_i_z}" radius="${P_link_dim}"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <xacro:cylinder_inertia mass="${0.001}" r="${P_link_dim}" l="${link_i_z}"/>
+    </inertial>
+  </link> 
+
+  <joint name="P3_joint" type="fixed">
+    <parent link="link3"/>
+    <child link="P_3"/>
+    <origin xyz="${0} 0 0" rpy="0 0 0"/>
+  </joint>
+
+-->
+
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+  
+
+</robot>

@@ -1,0 +1,14 @@
+#Inverse dynamics
+planar_2dof:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Position Controllers ---------------------------------------
+  joints_position_controller:
+    type: my_controller_unit6/PositionController
+    joint1: joint1
+    joint2: joint2
+    omega: [100.0]
+    alpha_inv_kin: [0.005]
